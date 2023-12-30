@@ -4,10 +4,10 @@ function App() {
   return (
     <div className="App">
       <div
-        class="container"
+        className="container"
       >
         <a className='btn btn-success' href='#'>
-          <i class="fas fa-solid fa-trash"> </i>
+          <i className="fas fa-solid fa-trash"> </i>
         </a>
       </div>
       
