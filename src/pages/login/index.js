@@ -15,7 +15,7 @@ const Login = () => {
     }
 
     const iniciarSesion = () => {
-        auth.saveUser("juan");
+        auth.iniciarSesion(username, passwd);
     }
 
     return(
