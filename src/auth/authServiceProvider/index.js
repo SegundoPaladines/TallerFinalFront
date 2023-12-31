@@ -29,16 +29,13 @@ const AuthServiceProvider = ({children}) => {
             }
         }else{
             //si el usuario no está autenticado
-            console.log("no existe toquen");
             const token = getRefreshToken();
             if(token){
                 const u = await getUser(token);
                 if(u){
-                    console.log("refresh token");
                     saveUser(u);
                 }
             }else{
-                console.log("ningun toquen token");
                 setIsAutenticated(false);
             }
         }
@@ -92,11 +89,14 @@ const AuthServiceProvider = ({children}) => {
         if(u){
             if(u.passwd === passwd){
                 saveUser(u);
+                return;
             }else{
                 setIsAutenticated(false);
+                return "passwd";
             }
         }else{
             setIsAutenticated(false);
+            return "usuario";
         }
     }
 

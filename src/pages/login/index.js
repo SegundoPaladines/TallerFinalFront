@@ -7,6 +7,10 @@ const Login = () => {
 
     const [username, setUsername] = useState("");
     const [passwd, setPasswd] = useState("");
+    const [usError, setUsError] = useState("form-control");
+    const [passError, setPassError] = useState("form-control");
+    const [errUsMg, setErrUsMg] = useState("");
+    const [errPasswdMg, setErrPasswdMg] = useState(""); 
 
     const auth = useAuth();
 
@@ -14,8 +18,27 @@ const Login = () => {
         return <Navigate to='/welcome'></Navigate>;
     }
 
-    const iniciarSesion = () => {
-        auth.iniciarSesion(username, passwd);
+    const iniciarSesion = async () => {
+        if(username !== ""){
+            if(passwd !== ""){
+                const res = await auth.iniciarSesion(username, passwd);
+                if(res==="usuario"){
+                    setUsError("form-control is-invalid");
+                    setErrUsMg("El Usuario no Existe!");
+                }
+
+                if(res==="passwd"){
+                    setPassError("form-control is-invalid");
+                    setErrPasswdMg("Contraseña Incorrecta!");
+                }
+            }else{
+                setPassError("form-control is-invalid");
+                setErrPasswdMg("La Contraseña es Requerida!");
+            }
+        }else{
+            setUsError("form-control is-invalid");
+            setErrUsMg("El Usuario es Requerido!");
+        }
     }
 
     return(
@@ -30,35 +53,56 @@ const Login = () => {
                             <div className="card-body">
                                 <div className="row justify-content-center">
                                     <div className="col-12">
-                                        <div className="input-group flex-nowrap">
-                                            <span 
-                                                className="input-group-text"
-                                                id="username"
-                                            >@</span>
-                                            <input 
-                                                type="text"
-                                                id="inputUsuario"
-                                                className="form-control"
-                                                placeholder="Nombre de usuario" 
-                                                aria-label="username" 
-                                                aria-describedby="username"
-                                                value={username}
-                                                onChange={(e) => setUsername(e.target.value)}
-                                            />
+                                        <div className="row">
+                                            <div className="input-group has-validation">
+                                                <span 
+                                                    className="input-group-text" 
+                                                    id="inputGroupUsername"
+                                                >Usuario @</span>
+                                                <input 
+                                                    type="text" 
+                                                    className={`${usError}`}
+                                                    id="validationUsername" 
+                                                    aria-describedby="inputGroupUsername validationUsernameFeedback"
+                                                    required 
+                                                    value={username}
+                                                    onChange={(e) => {
+                                                        setUsError("form-control");
+                                                        setUsername(e.target.value);
+                                                    }}    
+                                                />
+                                                <div 
+                                                    id="validationUsernameFeedback" 
+                                                    className="invalid-feedback"
+                                                >
+                                                    {errUsMg}
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="mb-4 row mt-2">
-                                            <label 
-                                                htmlFor="inputPassword"
-                                                className="col-sm-12 col-lg-12 col-xl-2 col-form-label"
-                                            >Contraseña</label>
-                                            <div className="col-sm-12 col-lg-12 col-xl-10">
+                                            <div className="input-group has-validation">
+                                                <span 
+                                                    className="input-group-text" 
+                                                    id="inputGroupUsername"
+                                                >Contraseña </span>
                                                 <input 
                                                     type="password" 
-                                                    className="form-control" 
-                                                    id="inputPassword"
+                                                    className={`${passError}`}
+                                                    id="validationPasswd" 
+                                                    aria-describedby="inputGroupPasswd validationPasswdFeedback"
+                                                    required 
                                                     value={passwd}
-                                                    onChange={(e) => setPasswd(e.target.value)}
+                                                    onChange={(e) => {
+                                                        setPassError("form-control");
+                                                        setPasswd(e.target.value);
+                                                    }}   
                                                 />
+                                                <div 
+                                                    id="validationPasswdFeedback" 
+                                                    className="invalid-feedback"
+                                                >
+                                                    {errPasswdMg}
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="row">
