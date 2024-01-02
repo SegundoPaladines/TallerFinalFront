@@ -4,7 +4,9 @@ import axios from "axios";
 const MascotasContext = createContext({
     getMascotas: async () => {},
     buscarMascota: async (pk) => {},
-    actualizarMascota: async(pk, dataset) => {},
+    actualizarMascota: async (pk, dataset) => {},
+    crearMascota: async (dataset) => {},
+    eliminarMascota: async (pk) => {},
 });
 
 const MascotasServiceProvider = ({children}) => {
@@ -30,6 +32,16 @@ const MascotasServiceProvider = ({children}) => {
         return null;
     }
 
+    const eliminarMascota = async (pk) => {
+        let r = "";  
+        
+        await axios.delete(`${url}/eliminar/${pk}`).then((res) => {
+            r = "success";
+        }).catch((e) => {r = "error";});
+    
+        return r;
+    }
+
     const actualizarMascota = async (pk, dataset) => {
         
         let r = "";
@@ -43,8 +55,20 @@ const MascotasServiceProvider = ({children}) => {
         return r;
     }
 
+    const crearMascota = async (dataset) => {        
+        let r = "";
+
+        await axios({
+            method:'POST',
+            url:`${url}/crear`,
+            data:dataset
+        }).then((res) => {r = "success";}).catch((e) => {r = "error";});
+    
+        return r;
+    }
+
     return(
-        <MascotasContext.Provider value={{ getMascotas, buscarMascota, actualizarMascota }}>
+        <MascotasContext.Provider value={{ getMascotas, buscarMascota, actualizarMascota, crearMascota, eliminarMascota }}>
             {children}
         </MascotasContext.Provider>
     );
