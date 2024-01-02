@@ -1,10 +1,25 @@
+import { useState, useEffect } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
-import { useAuth } from '../../auth';
+import { useAuth } from '../../providers';
 
 const ProtectedRoute = () => {
-    const auth = useAuth();
+  const auth = useAuth();
+  const [authChecked, setAuthChecked] = useState(false);
 
-    return auth.isAutenticated? <Outlet />: <Navigate to='/login' />;
-}
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      await auth.checkAuth();
+      setAuthChecked(true);
+    };
+
+    checkAuthentication();
+  }, []);
+
+  if (!authChecked) {
+    return null;
+  }
+
+  return auth.isAutenticated ? <Outlet /> : <Navigate to='/login' />;
+};
 
 export default ProtectedRoute;

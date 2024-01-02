@@ -1,5 +1,6 @@
 import Login from './login';
 import Register from './register';
-import Welcome from './welcome';
+import Mascotas from './mascotas';
+import MascotaDetail from './mascota-details';
 
-export {Login, Register, Welcome};
+export {Login, Register, Mascotas, MascotaDetail};

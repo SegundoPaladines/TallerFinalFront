@@ -1,18 +1,17 @@
 import './App.css';
+import { DefaultLayout } from './common';
 
 function App() {
   return (
-    <div className="App">
-      <div
-        className="container"
-      >
-        <a className='btn btn-success' href='#'>
-          <i className="fas fa-solid fa-trash"> </i>
-        </a>
+    <DefaultLayout>
+      <div className="App mt-5 pt-2">
+        <div
+          className="container"
+        >
+          Bienvenida
+        </div>
       </div>
-      
-      
-    </div>
+    </DefaultLayout>
   );
 }
 

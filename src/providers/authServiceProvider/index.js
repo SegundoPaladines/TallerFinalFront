@@ -1,4 +1,4 @@
-import React, { useContext, createContext, useState, useEffect} from "react";
+import React, { useContext, createContext, useState, useEffect } from "react";
 import axios from "axios";
 
 const AuthContext = createContext({
@@ -8,7 +8,8 @@ const AuthContext = createContext({
     saveUser: (usuario) => {},
     getRefreshToken: () => {},
     finalizarSesion: () => {},
-    iniciarSesion: (username, passwd) => {},
+    iniciarSesion: async (username, passwd) => {},
+    checkAuth: async () => {},
 });
 
 const AuthServiceProvider = ({children}) => {
@@ -21,7 +22,6 @@ const AuthServiceProvider = ({children}) => {
 
     async function checkAuth(){
         if(accessToken){
-            console.log("existe toquen");
             //si el usuario está autenticado
             const u = await getUser(accessToken);
             if(u){
@@ -43,10 +43,7 @@ const AuthServiceProvider = ({children}) => {
         return;
     }
 
-    //importante el array de vacio para que solo se ejecute una vez
-    useEffect(() => {
-        checkAuth();
-    }, []);
+    useEffect(()=>{checkAuth()},[]);
 
     const getUser = async (username) => {
         const res = await axios.get(`${url}/buscar/nombre/${username}`);
@@ -110,7 +107,7 @@ const AuthServiceProvider = ({children}) => {
     }
 
     return (
-        <AuthContext.Provider value={{user, isAutenticated, getAccessToken, saveUser, getRefreshToken, finalizarSesion, iniciarSesion}}>
+        <AuthContext.Provider value={{user, isAutenticated, getAccessToken, saveUser, getRefreshToken, finalizarSesion, iniciarSesion, checkAuth}}>
             {children}
         </AuthContext.Provider>
     );

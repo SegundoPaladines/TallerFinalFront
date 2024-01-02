@@ -15,41 +15,48 @@ import 'bootstrap/dist/js/bootstrap.bundle';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 //importar nuestras propias paginas
-import { Login, Register, Welcome} from './pages';
+import { Login, Register, MascotaDetail, Mascotas} from './pages';
 import {ProtectedRoute} from './security';
-import { AuthServiceProvider } from './auth';
+import { AuthServiceProvider, MascotasServiceProvider, SolicitudesServiceProvider } from './providers';
 
 const router = createBrowserRouter([
   {
-    path:"/",
-    element: <App />
+    path: '/',
+    element: <App />,
   },
   {
-    path:"/login",
-    element: <Login />
+    path: '/login',
+    element: <Login />,
   },
   {
-    path:"/register",
-    element: <Register />
+    path: '/register',
+    element: <Register />,
   },
   {
-    path:"/",
+    path: '/',
     element: <ProtectedRoute />,
-    children:[
+    children: [
       {
-        path:"/welcome",
-        element:<Welcome />,
-      }
-    ]
-  }
+        path: 'mascotas',
+        element: <Mascotas />,
+      },
+      {
+        path: 'mascota/:id',
+        element: <MascotaDetail />,
+      },
+    ],
+  },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AuthServiceProvider>
-      
-      <RouterProvider router={router} />
+      <MascotasServiceProvider>
+        <SolicitudesServiceProvider>
+          <RouterProvider router={router} />
+        </SolicitudesServiceProvider>
+      </MascotasServiceProvider>
     </AuthServiceProvider>
   </React.StrictMode>
 );

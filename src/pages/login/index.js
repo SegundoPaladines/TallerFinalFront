@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {DefaultLayout} from '../../common'
-import {useAuth} from '../../auth';
+import {useAuth} from '../../providers';
 import {Navigate} from 'react-router-dom';
 
 const Login = () => {
@@ -15,7 +15,7 @@ const Login = () => {
     const auth = useAuth();
 
     if(auth.isAutenticated){
-        return <Navigate to='/welcome'></Navigate>;
+        return <Navigate to='/mascotas'></Navigate>;
     }
 
     const iniciarSesion = async () => {
