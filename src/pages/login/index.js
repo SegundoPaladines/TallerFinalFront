@@ -64,7 +64,7 @@ const Login = () => {
                                                     className={`${usError}`}
                                                     id="validationUsername" 
                                                     aria-describedby="inputGroupUsername validationUsernameFeedback"
-                                                    required 
+                                                    required
                                                     value={username}
                                                     onChange={(e) => {
                                                         setUsError("form-control");

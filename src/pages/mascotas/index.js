@@ -1,7 +1,7 @@
 import { useAuth, useMascotas } from "../../providers";
 import { DefaultLayout } from "../../common";
 import { useEffect, useState } from "react";
-import { MascotaComponent } from "../../components";
+import { MascotaComponent, MascotasFormComponent } from "../../components";
 
 const Mascotas = () => {
     //providers
@@ -25,13 +25,22 @@ const Mascotas = () => {
     return(
         <DefaultLayout>
             <div className="mt-5 pt-4">
-                {auth.user.rol==="administrador"?(
-                        <p>Este es un administrador</p>
-                    ):(
-                        <p>Este es un usuario</p>
-                    )
-                }
                 <div className="container">
+                    {auth.user.rol==="administrador"?(
+                        <div className="row">
+                            <div className="col">
+                                <button 
+                                    type="button"
+                                    className="btn btn-outline-success w-100 mb-3"
+                                    data-bs-toggle="modal"
+                                    data-bs-target={`#mascota-formulario-Agregar-`}
+                                >
+                                    <i className="fa-solid fa-add"></i>
+                                </button>
+                            </div>
+                        </div>        
+                    ):""
+                    }
                     <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3">
                         {
                             mascotas.map((mascota) => (
@@ -45,6 +54,11 @@ const Mascotas = () => {
                     </div>
                 </div>
             </div>
+
+            <MascotasFormComponent
+                {...{funcion:"Agregar"}}
+            />
+
         </DefaultLayout>
     );
 }

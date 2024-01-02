@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth, useSolicitudes } from "../../providers";
 import { useState } from "react";
+import { MascotasFormComponent } from '../'
 
 const MascotaComponent = ({pk, nombre, foto, rasa, edad, tipo_mascota, estado}) => {
     const [mensaje, setMensaje] = useState("");
@@ -10,30 +11,38 @@ const MascotaComponent = ({pk, nombre, foto, rasa, edad, tipo_mascota, estado}) 
     const solicitudesProvider = useSolicitudes();
 
 
-    const enviarSolicitud = async() => {
-        if(pk && user){
-            const hoy = new Date();
-            const fecha_inicio = hoy.toISOString().split('T')[0];
-            const dataset = {
-                mascotaPK:pk,
-                adoptante:user.pk,
-                estado:'P',
-                fecha_inicio:fecha_inicio
-            }
-            const res = await solicitudesProvider.enviarSolicitud(dataset);
-
-            if(res === "success"){
-                setMensaje("Solicitud Enviada con Exito");
-                setAlertType("alert alert-success");
-            }else{
-                setMensaje("No se ha Podido realizar la Solicitud");
+    const enviarSolicitud = async () => {
+        try {
+            if (pk && user) {
+                const hoy = new Date();
+                const fecha_inicio = hoy.toISOString().split('T')[0];
+    
+                const dataset = {
+                    mascotaPK: pk,
+                    adoptante: user.pk,
+                    estado: 'P',
+                    fecha_inicio: fecha_inicio
+                };
+    
+                const res = await solicitudesProvider.enviarSolicitud(dataset);
+    
+                if (res === "success") {
+                    setMensaje("Solicitud Enviada con Éxito");
+                    setAlertType("alert alert-success");
+                } else {
+                    setMensaje("No se ha podido realizar la Solicitud. Por favor, inténtalo de nuevo más tarde.");
+                    setAlertType("alert alert-danger");
+                }
+            } else {
+                setMensaje("No se ha podido realizar la Solicitud. Asegúrate de haber iniciado sesión.");
                 setAlertType("alert alert-danger");
             }
-        }else{
-            setMensaje("No se ha Podido realizar la Solicitud");
+        } catch (error) {
+            console.error("Error al enviar la solicitud:", error);
+            setMensaje("Error inesperado al enviar la Solicitud. Por favor, inténtalo de nuevo más tarde.");
             setAlertType("alert alert-danger");
         }
-    }
+    };
 
     return (
         <div className="card h-100">
@@ -108,12 +117,12 @@ const MascotaComponent = ({pk, nombre, foto, rasa, edad, tipo_mascota, estado}) 
                             </>
                         ):(
                             <>
-                                <div className="col">
+                                <div className="col mb-2">
                                     <button 
                                         type="button"
                                         className="btn btn-outline-warning w-100"
                                         data-bs-toggle="modal"
-                                        data-bs-target={`#mascota-adopcion${pk}`}
+                                        data-bs-target={`#mascota-formulario-Editar-${pk}`}
                                     >
                                        <i className="fa-solid fa-edit"></i>
                                     </button>
@@ -123,7 +132,7 @@ const MascotaComponent = ({pk, nombre, foto, rasa, edad, tipo_mascota, estado}) 
                                         type="button"
                                         className="btn btn-outline-danger w-100"
                                         data-bs-toggle="modal"
-                                        data-bs-target={`#mascota-adopcion${pk}`}
+                                        data-bs-target={`#mascota-formulario-Eliminar-${pk}`}
                                     >
                                        <i className="fa-solid fa-trash"></i>
                                     </button>
@@ -195,6 +204,14 @@ const MascotaComponent = ({pk, nombre, foto, rasa, edad, tipo_mascota, estado}) 
                     </div>
                 </div>
             </div>
+
+            <MascotasFormComponent
+                {...{pk, funcion:"Editar"}}
+            />
+
+            <MascotasFormComponent
+                {...{pk, funcion:"Eliminar"}}
+            />
             
         </div>
     );
