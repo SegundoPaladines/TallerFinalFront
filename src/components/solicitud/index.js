@@ -8,8 +8,9 @@ const SolicitudComponent = ({index, solicitud}) => {
     const mascotasService = useMascotas();
     const solicitudesService = useSolicitudes()
     const user = useAuth().user;
-    const [persona, setPersona] = useState({});
     const [mascota, setMascota] = useState({});
+    const [accion, setAccion] = useState('');
+    const [persona, setPersona] = useState({});
 
     useEffect(() => {
         //getPersona();
@@ -21,6 +22,71 @@ const SolicitudComponent = ({index, solicitud}) => {
             const res = await mascotasService.buscarMascota(solicitud.mascotaPK);
             if(res){
                 setMascota(res);
+            }
+        }
+    }
+
+    const realizarAccion = async () => {
+        if(accion==="Eliminar"){
+            await cancelarSolicitud();
+            
+            return;
+        }
+
+        if(accion==="Rechazar"){
+            await rechazarSolicitud();
+
+            return;
+        }
+
+        if(accion==="Aceptar"){
+            await aceptarSolicitud();
+
+            return;
+        }
+    }
+
+    const aceptarSolicitud = async () => {
+        if(solicitud.pk && solicitud.estado === 'P'){
+            const res = await mascotasService.actualizarMascota(solicitud.mascotaPK, {estado:1});
+            if(res === "success"){
+                const hoy = new Date();
+                const fecha_fin = hoy.toISOString().split('T')[0];
+
+                const dataset = {
+                    estado:"A",
+                    fecha_fin:fecha_fin
+                }
+
+                const sol = await solicitudesService.actualizarSolicitud(solicitud.pk, dataset);
+
+                if(sol === "success"){
+                    mostrarAlerta("Solicitud aceptada con Exito","success");
+                }else{
+                    mostrarAlerta("No se puede Adoptar esa Mascota","error");
+                }
+            }else{
+                mostrarAlerta("No se puede Adoptar esa Mascota","error");
+            }
+        }
+    }
+
+    const rechazarSolicitud = async () => {
+        if(solicitud.pk && solicitud.estado === 'P'){
+            const hoy = new Date();
+                const fecha_fin = hoy.toISOString().split('T')[0];
+
+                const dataset = {
+                    estado:"R",
+                    fecha_fin:fecha_fin
+                }
+
+            const res = await solicitudesService.actualizarSolicitud(solicitud.pk, dataset);
+
+            if(res === "success"){
+                mostrarAlerta("Solicitud rechazada con Exito","success");
+            }else{
+                mostrarAlerta("No se ha Podido rechazar la Solicitud","error");
             }
         }
     }
@@ -119,34 +185,44 @@ const SolicitudComponent = ({index, solicitud}) => {
                                                 type="button"
                                                 data-bs-toggle="modal"
                                                 className={`btn btn-danger w-100 ${solicitud.estado==='P'?"":"disabled"}`}
-                                                data-bs-target={`#modalEliminarSolicitud${solicitud.pk}`}
+                                                data-bs-target={`#modalSolicitud${solicitud.pk}`}
+                                                onClick={(e) => setAccion("Eliminar")}
                                             >
-                                                Cancelar Solicitud
+                                                Eliminar Solicitud
                                             </button>
                                         ):"Mascota no encontrada"
                                     }
                                 </div>
                             </div>
                             {
-                                user.rol==="administrador"?(
+                                user.rol==="administrador" && solicitud.estado==="P"?(
                                     <div className="row">
                                         <div className="col">
                                             <button 
-                                                className="btn btn-success"
+                                                data-bs-toggle="modal"
+                                                className={`btn btn-success w-100`}
+                                                data-bs-target={`#modalSolicitud${solicitud.pk}`}
+                                                onClick={(e) => setAccion("Aceptar")}
                                             >
                                                 Aceptar Solicitud
                                             </button>
                                         </div>
                                         <div className="col">
-                                            <button 
-                                                className="btn btn-danger"
+                                            <button
+                                                data-bs-toggle="modal"
+                                                className={`btn btn-danger w-100`}
+                                                data-bs-target={`#modalSolicitud${solicitud.pk}`}
+                                                onClick={(e) => setAccion("Rechazar")}
                                             >
                                                 Rechazar Solicitud
                                             </button>
                                         </div>
                                         <div className="col">
                                             <button 
-                                                className="btn btn-danger"
+                                                 data-bs-toggle="modal"
+                                                 className={`btn btn-danger w-100`}
+                                                 data-bs-target={`#modalSolicitud${solicitud.pk}`}
+                                                 onClick={(e) => setAccion("Eliminar")}
                                             >
                                                 Eliminar Solicitud
                                             </button>
@@ -161,41 +237,71 @@ const SolicitudComponent = ({index, solicitud}) => {
 
             <div 
                 className="modal fade" 
-                id={`modalEliminarSolicitud${solicitud.pk}`} 
+                id={`modalSolicitud${solicitud.pk}`}
                 tabIndex="-1" 
-                aria-labelledby={`modalEliminarLabelSolicitud${solicitud.pk}`} 
+                aria-labelledby={`modalLabelSolicitud${solicitud.pk}`} 
                 aria-hidden="true"
             >
                 <div className="modal-dialog">
                     <div className="modal-content">
-                    <div className="modal-header">
-                        <h1 
-                            className="modal-title fs-5" 
-                            id={`modalEliminarLabelSolicitud${solicitud.pk}`}
-                        >Cancelar Solicitud</h1>
-                        <button 
-                            type="button" 
-                            className="btn-close" 
-                            data-bs-dismiss="modal" 
-                            aria-label="Close"
-                        ></button>
-                    </div>
-                    <div className="modal-body">
-                        ¿Está seguro de querer eliminar la solicitud de la mascota {mascota?mascota.nombre:""}?
-                    </div>
-                    <div className="modal-footer">
-                        <button 
-                            type="button" 
-                            className="btn btn-success" data-bs-dismiss="modal"
-                        >Atrás</button>
-                        <button 
-                            type="button" 
-                            className="btn btn-danger"
-                            onClick={(e) => cancelarSolicitud()}
-                        >
-                            Confirmar Cancelación
-                        </button>
-                    </div>
+                        <div className="modal-header">
+                            <h1 
+                                className="modal-title fs-5" 
+                                id={`modalLabelSolicitud${solicitud.pk}`}
+                            >
+                                {accion?accion:""} Solicitud
+                            </h1>
+                            <button 
+                                type="button" 
+                                className="btn-close" 
+                                data-bs-dismiss="modal" 
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div className="modal-body">
+                            {
+                                accion==="Eliminar"?(<p>
+                                    ¿Está seguro de querer eliminar la solicitud de la 
+                                    mascota {mascota?mascota.nombre:""}?
+                                </p>):""
+                            }{
+                                accion==="Rechazar"?(<p>
+                                    ¿Está seguro de querer rechazar la solicitud de la 
+                                    mascota {mascota?mascota.nombre:""}?
+                                </p>):""
+                            }{
+                                accion==="Aceptar"?(<p>
+                                    ¿Está seguro de querer aceptar la solicitud de la 
+                                    mascota {mascota?mascota.nombre:""}?
+                                </p>):""
+                            }
+                        </div>
+                        <div className="modal-footer">
+                            <button 
+                                type="button" 
+                                className={`btn 
+                                            ${accion==="Aceptar"?" btn-danger":" btn-success"}
+                                        `} 
+                                data-bs-dismiss="modal"
+                            >Atrás</button>
+                            <button 
+                                type="button" 
+                                className={`btn 
+                                            ${accion==="Aceptar"?" btn-success":" btn-danger"}
+                                        `}
+                                onClick={(e) => realizarAccion()}
+                            >
+                                {
+                                    accion==="Eliminar"?"Confirmar Eliminación":""
+                                }
+                                {
+                                    accion==="Rechazar"?"Confirmar Rechazo":""
+                                }
+                                {
+                                    accion==="Aceptar"?"Confirmar Aceptación":""
+                                }
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

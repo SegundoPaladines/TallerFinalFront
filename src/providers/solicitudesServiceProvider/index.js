@@ -7,6 +7,7 @@ const SolicitudesContext = createContext({
     enviarSolicitud: async (pk) => {},
     buscarSolicitudesUsuario: async (pk) => {},
     eliminarSolicitud: async () => {},
+    actualizarSolicitud: async () => {},
 });
 
 const SolicitudesServiceProvider = ({children}) => {
@@ -53,6 +54,18 @@ const SolicitudesServiceProvider = ({children}) => {
         return r;
     }
 
+    const actualizarSolicitud = async (pk, parametros) => {
+        let r = "";
+
+        await axios({
+            method:'PUT',
+            url:`${url}/actualizar/${pk}`,
+            data:parametros
+        }).then(async (res) => {r= "success";}).catch((e)=>{r="error";});
+
+        return r;
+    }
+
     const enviarSolicitud = async (parametros) => {
         let r = "";
 
@@ -71,7 +84,8 @@ const SolicitudesServiceProvider = ({children}) => {
                 buscarSolicitud, 
                 enviarSolicitud,
                 buscarSolicitudesUsuario,
-                eliminarSolicitud
+                eliminarSolicitud,
+                actualizarSolicitud
             }}
         >
             {children}
