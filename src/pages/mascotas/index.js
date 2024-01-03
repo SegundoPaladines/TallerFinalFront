@@ -26,30 +26,37 @@ const Mascotas = () => {
         <DefaultLayout>
             <div className="mt-5 pt-4">
                 <div className="container">
-                    {auth.user.rol==="administrador"?(
-                        <div className="row">
-                            <div className="col">
-                                <button 
-                                    type="button"
-                                    className="btn btn-outline-success w-100 mb-3"
-                                    data-bs-toggle="modal"
-                                    data-bs-target={`#mascota-formulario-Agregar-`}
-                                >
-                                    <i className="fa-solid fa-add"></i>
-                                </button>
-                            </div>
-                        </div>        
-                    ):""
+                    {   
+                        auth.user.rol==="administrador"?(
+                            <div className="row">
+                                <div className="col">
+                                    <button 
+                                        type="button"
+                                        className="btn btn-outline-success w-100 mb-3"
+                                        data-bs-toggle="modal"
+                                        data-bs-target={`#mascota-formulario-Agregar-`}
+                                    >
+                                        <i className="fa-solid fa-add"></i>
+                                    </button>
+                                </div>
+                            </div>        
+                        ):""
                     }
                     <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3">
                         {
-                            mascotas.map((mascota) => (
-                                <div className="col mb-5"  key={`maascota${mascota.pk}`}>
-                                        <MascotaComponent
-                                            {...mascota}
-                                        />
+                            mascotas?(
+                                mascotas.map((mascota) => (
+                                    <div className="col mb-5"  key={`maascota${mascota.pk}`}>
+                                            <MascotaComponent
+                                                {...mascota}
+                                            />
+                                    </div>
+                                ))
+                            ):(
+                                <div className="col mb-5" >
+                                     <p>No hay ninguna Mascota Registrada</p>
                                 </div>
-                            ))
+                            )
                         }
                     </div>
                 </div>

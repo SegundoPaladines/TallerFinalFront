@@ -66,10 +66,15 @@ const MascotaDetail = () => {
                             )
                         }
                         <div className="row">
-                            <div className="col-sm-12 col-lg-10"></div>
+                            <div className="col-sm-12 col-lg-8"></div>
+                            <div className="col-sm-12 col-lg-2 mb-2">
+                                <Link className="btn btn-outline-dark w-100" to="/solicitudes">
+                                    Solicitudes
+                                </Link>
+                            </div>
                             <div className="col-sm-12 col-lg-2">
                                 <Link className="btn btn-outline-dark w-100" to="/mascotas">
-                                    Regresar
+                                    Mascotas
                                 </Link>
                             </div>
                         </div>

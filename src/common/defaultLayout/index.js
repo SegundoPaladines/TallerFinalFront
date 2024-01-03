@@ -61,6 +61,19 @@ const DefaultLayout = ({children}) => {
                                             )
                                         }
                                     </li>
+                                    <li className="nav-item">
+                                        {
+                                            auth.isAutenticated?
+                                            (
+                                                <Link
+                                                    className="nav-link" 
+                                                    to="/solicitudes"
+                                                >
+                                                    Solicitudes
+                                                </Link>
+                                            ):""
+                                        }
+                                    </li>
                                 </ul>
                                 <div className="justify-content-end">
                                     <ul className="navbar-nav me-auto mb-2 mb-lg-0 justify-content-end">

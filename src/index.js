@@ -15,7 +15,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 //importar nuestras propias paginas
-import { Login, Register, MascotaDetail, Mascotas} from './pages';
+import { Login, Register, MascotaDetail, Mascotas, Solicitudes } from './pages';
 import {ProtectedRoute} from './security';
 import { AuthServiceProvider, MascotasServiceProvider, SolicitudesServiceProvider } from './providers';
 
@@ -44,6 +44,10 @@ const router = createBrowserRouter([
         path: 'mascota/:id',
         element: <MascotaDetail />,
       },
+      {
+        path: 'solicitudes',
+        element: <Solicitudes />
+      }
     ],
   },
 ]);

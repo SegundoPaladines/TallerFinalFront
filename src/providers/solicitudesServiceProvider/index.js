@@ -5,6 +5,8 @@ const SolicitudesContext = createContext({
     getSolicitudes: async () => {},
     buscarSolicitud: async (pk) => {},
     enviarSolicitud: async (pk) => {},
+    buscarSolicitudesUsuario: async (pk) => {},
+    eliminarSolicitud: async () => {},
 });
 
 const SolicitudesServiceProvider = ({children}) => {
@@ -31,8 +33,27 @@ const SolicitudesServiceProvider = ({children}) => {
         return null;
     }
 
-    const enviarSolicitud = async (parametros) => {
+    const buscarSolicitudesUsuario = async (pk) => {
+        const res =  await axios.get(`${url}/buscar/usuario/${pk}`);
 
+        if(res.data){
+            return res.data;
+        }
+
+        return null;
+    }
+
+    const eliminarSolicitud = async (pk) => {
+        let r = "";  
+        
+        await axios.delete(`${url}/eliminar/${pk}`).then((res) => {
+            r = "success";
+        }).catch((e) => {r = "error";});
+    
+        return r;
+    }
+
+    const enviarSolicitud = async (parametros) => {
         let r = "";
 
         await axios({
@@ -45,7 +66,14 @@ const SolicitudesServiceProvider = ({children}) => {
     }
 
     return(
-        <SolicitudesContext.Provider value={{ getSolicitudes, buscarSolicitud, enviarSolicitud }}>
+        <SolicitudesContext.Provider value={{
+                getSolicitudes, 
+                buscarSolicitud, 
+                enviarSolicitud,
+                buscarSolicitudesUsuario,
+                eliminarSolicitud
+            }}
+        >
             {children}
         </SolicitudesContext.Provider>
     );
