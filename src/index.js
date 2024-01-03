@@ -17,7 +17,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 //importar nuestras propias paginas
 import { Login, Register, MascotaDetail, Mascotas, Solicitudes } from './pages';
 import {ProtectedRoute} from './security';
-import { AuthServiceProvider, MascotasServiceProvider, SolicitudesServiceProvider } from './providers';
+import { AuthServiceProvider, MascotasServiceProvider, SolicitudesServiceProvider, UsuariosServiceProvider } from './providers';
 
 const router = createBrowserRouter([
   {
@@ -58,7 +58,9 @@ root.render(
     <AuthServiceProvider>
       <MascotasServiceProvider>
         <SolicitudesServiceProvider>
-          <RouterProvider router={router} />
+          <UsuariosServiceProvider>
+            <RouterProvider router={router} />
+          </UsuariosServiceProvider>
         </SolicitudesServiceProvider>
       </MascotasServiceProvider>
     </AuthServiceProvider>

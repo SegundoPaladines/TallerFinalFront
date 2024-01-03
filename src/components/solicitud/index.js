@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
-import { useAuth, useMascotas, useSolicitudes } from "../../providers";
+import { useAuth, useMascotas, useSolicitudes, useUsuarios } from "../../providers";
 import { mostrarAlerta } from "../../functions";
 
 const { Link } = require("react-router-dom");
 
 const SolicitudComponent = ({index, solicitud}) => {
     const mascotasService = useMascotas();
-    const solicitudesService = useSolicitudes()
+    const solicitudesService = useSolicitudes();
+    const usersProvider = useUsuarios();
     const user = useAuth().user;
+
     const [mascota, setMascota] = useState({});
     const [accion, setAccion] = useState('');
     const [persona, setPersona] = useState({});
 
     useEffect(() => {
-        //getPersona();
+        getPersona();
         getMascota();
     }, []);
 
@@ -22,6 +24,15 @@ const SolicitudComponent = ({index, solicitud}) => {
             const res = await mascotasService.buscarMascota(solicitud.mascotaPK);
             if(res){
                 setMascota(res);
+            }
+        }
+    }
+
+    const getPersona = async () => {
+        if(solicitud.adoptante){
+            const res = await usersProvider.buscarUsuario(solicitud.adoptante);
+            if(res){
+                setPersona(res);
             }
         }
     }
@@ -122,7 +133,21 @@ const SolicitudComponent = ({index, solicitud}) => {
                                     Tipo de Mascota: {mascota.tipo_mascota==='G'?"Gato":""}
                                     {mascota.tipo_mascota==='P'?"Perro":""}
                                 </p>
-                                <hr />
+                                {
+                                    user.rol==="administrador"?"":(
+                                        <hr />
+                                    )
+                                }
+                            </div>
+                            <div className={`${user.rol==="administrador"?"row":"d-none"}`}>
+                                {
+                                    <p className="text-center">
+                                        {    
+                                            persona?"Adoptante: "+persona.nombres:""
+                                        }
+                                    </p>
+                                }
+                                <hr />        
                             </div>
                             <div className="row row-cols-1 row-cols-md-2">
                                 <div className="col mb-2 mt-2">
@@ -140,15 +165,6 @@ const SolicitudComponent = ({index, solicitud}) => {
                                             solicitud.estado === 'R'?"  Rechazada":""
                                         }
                                     </p>
-                                </div>
-                                <div className={`${user.rol==="administrador"?"col mb-2":"d-none"}`}>
-                                    {
-                                        <p>
-                                            {    
-                                                solicitud.adoptante
-                                            }
-                                        </p>
-                                    }
                                 </div>
                                 <div className="col mb-2">
                                     <p>Fecha de Inicio: 
@@ -196,8 +212,8 @@ const SolicitudComponent = ({index, solicitud}) => {
                             </div>
                             {
                                 user.rol==="administrador" && solicitud.estado==="P"?(
-                                    <div className="row">
-                                        <div className="col">
+                                    <div className="row row-cols-1 row-cols-sm-3">
+                                        <div className="col mb-2">
                                             <button 
                                                 data-bs-toggle="modal"
                                                 className={`btn btn-success w-100`}
@@ -207,7 +223,7 @@ const SolicitudComponent = ({index, solicitud}) => {
                                                 Aceptar Solicitud
                                             </button>
                                         </div>
-                                        <div className="col">
+                                        <div className="col mb-2">
                                             <button
                                                 data-bs-toggle="modal"
                                                 className={`btn btn-danger w-100`}
