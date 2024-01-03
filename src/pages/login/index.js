@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {DefaultLayout} from '../../common'
 import {useAuth} from '../../providers';
 import {Navigate} from 'react-router-dom';
+const { Link }  = require('react-router-dom');
 
 const Login = () => {
 
@@ -105,13 +106,17 @@ const Login = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="row">
+                                        <div className="row mt-5">
                                             <button
                                                 className="btn btn-success w-80"
                                                 onClick={(e) => iniciarSesion()}
                                             >
                                                 Login
                                             </button>
+                                        </div>
+                                        <div className='row text-center mt-3'>
+                                            <p> ¿No tienes una cuenta ? <Link to="/register">Registrate aqui</Link></p>
+                                            
                                         </div>
                                     </div>
                                 </div>

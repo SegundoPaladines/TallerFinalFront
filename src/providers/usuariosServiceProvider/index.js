@@ -4,6 +4,7 @@ import axios from "axios";
 const UsuariosContext = createContext({
     buscarUsuario: async () => {},
     buscarUsuarioNombre: async () => {},
+    crearUsuario: async () => {},
 });
 
 const UsuariosServiceProvider = ({children}) => {
@@ -29,10 +30,23 @@ const UsuariosServiceProvider = ({children}) => {
         return null;
     }
 
+    const crearUsuario = async (dataset) => {
+        let r = "";
+
+        await axios({
+            method:'POST',
+            url:`${url}/crear`,
+            data:dataset
+        }).then(async (res) => {r = "success";}).catch((e)=>{r = "error";});
+
+        return r;
+    }
+
     return (
         <UsuariosContext.Provider value={{
                 buscarUsuario,
-                buscarUsuarioNombre
+                buscarUsuarioNombre,
+                crearUsuario
             }}
         >
             {children}

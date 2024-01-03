@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { DefaultLayout } from "../../common";
-import { useUsuarios } from "../../providers";
-const Register = () => {
+import { useAuth, useUsuarios } from "../../providers";
+import { mostrarAlerta } from "../../functions";
+import { Navigate } from "react-router-dom";
+const { Link }  = require('react-router-dom');
 
+const Register = () => {
     const usuariosService = useUsuarios();
+    const auth = useAuth();
 
     const [nombres, setNombres] = useState("");
     const [edad, setEdad] = useState(0);
@@ -12,14 +16,37 @@ const Register = () => {
     const [passwd, setPasswd] = useState("");
     const [alert, setAlert] = useState("");
 
+    if(auth.isAutenticated){
+        return <Navigate to="/mascotas" />;
+    }
+
     const registrarUsuario = async () => {
         if(validarCampos()){
-            const repetido = usuariosService.buscarUsuarioNombre(userName);
+            const repetido = await usuariosService.buscarUsuarioNombre(userName);
+            console.log(repetido);
             if(!repetido){
-                console.log("todo bien");
+                const dataset = {
+                    nombres:nombres,
+                    edad:edad,
+                    telefono:telefono,
+                    usuario:userName,
+                    passwd:passwd,
+                    rol:"usuario"
+                }
+
+                const res = await usuariosService.crearUsuario(dataset);
+                if(res === "success"){
+                    await auth.iniciarSesion(userName, passwd);
+                    
+                    mostrarAlerta("Usuario creado con Exito","success");
+                }else{
+                    mostrarAlerta("No se ha podido registrar","error");
+                }
             }else{
                 setAlert("El nombre de usuario: "+userName+" ya fue tomado");
             }
+        }else{
+            setAlert("Asegurese de diligenciar todos los campos correctamente");
         }
     }
 
@@ -142,6 +169,7 @@ const Register = () => {
                                                     onChange={(e) => {
                                                         setNombres(e.target.value);
                                                         errorLog(e, "nombre");
+                                                        setAlert("");
                                                     }}    
                                                 />
                                                 <div 
@@ -170,6 +198,7 @@ const Register = () => {
                                                     onChange={(e) => {
                                                         setEdad(e.target.value);
                                                         errorLog(e, "edad");
+                                                        setAlert("");
                                                     }}    
                                                 />
                                                 <div 
@@ -195,6 +224,7 @@ const Register = () => {
                                                     onChange={(e) => {
                                                         setTelefono(e.target.value);
                                                         errorLog(e, "tel");
+                                                        setAlert("");
                                                     }}    
                                                 />
                                                 <div 
@@ -219,6 +249,7 @@ const Register = () => {
                                                     onChange={(e) => {
                                                         setUserName(e.target.value);
                                                         errorLog(e,"userName");
+                                                        setAlert("");
                                                     }}    
                                                 />
                                                 <div 
@@ -247,6 +278,7 @@ const Register = () => {
                                                     onChange={(e) => {
                                                        setPasswd(e.target.value);
                                                        errorLog(e, "passwd");
+                                                       setAlert("");
                                                     }}
                                                 />
                                                 <div 
@@ -265,6 +297,9 @@ const Register = () => {
                                             >
                                                 Registrarse
                                             </button>
+                                        </div>
+                                        <div className='row text-center mt-3'>
+                                            <p> ¿Ya tienes una cuenta ? <Link to="/register">Iniciar Sesión</Link></p>
                                         </div>
                                     </div>
                                 </div>
