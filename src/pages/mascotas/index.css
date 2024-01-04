@@ -1,0 +1,28 @@
+.container-buscador{
+    padding: 20px;
+}
+.container-buscador .form-control{
+    border: none;
+}
+.container-buscador .input-group{
+    border: 1px solid green;
+    border-radius: 10px;
+}
+.icono-buscador{
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    color: green;
+}
+#buscador{
+    padding: 20px;
+    border: none;
+    box-shadow: none;
+    color: green;
+}
+#buscador:active{
+    outline: none;
+}
+#buscador:focus{
+    outline: none;
+}
